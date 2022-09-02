@@ -1,0 +1,13 @@
+python/
+pycharm + all/
+django/
+Procfile
+apps/masterclass/__pycache__/
+apps/masterclass/migrations/__pycache__/
+apps/mentors/__pycache__/
+apps/mentors/migrations/__pycache__/
+apps/course/__pycache__/
+apps/course/migrations/__pycache__/
+courseclub/__pycache__/
+courseclub/settings.py
+requirements.txt/
