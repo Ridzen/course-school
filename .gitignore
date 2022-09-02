@@ -9,5 +9,5 @@ apps/mentors/migrations/__pycache__/
 apps/course/__pycache__/
 apps/course/migrations/__pycache__/
 courseclub/__pycache__/
-courseclub/settings.py
+#courseclub/settings.py
 requirements.txt/
