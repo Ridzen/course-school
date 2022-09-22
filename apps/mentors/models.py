@@ -6,8 +6,10 @@ from django.core import validators
 from django.conf import settings
 from datetime import datetime
 from datetime import timedelta
+from django.utils.crypto import get_random_string
 
-from apps.mentors.manager import TeacherManager
+
+from apps.mentors.manager import TeacherManager, CustomManager
 
 
 class Teacher(AbstractBaseUser, PermissionsMixin):
@@ -83,3 +85,51 @@ class Teacher(AbstractBaseUser, PermissionsMixin):
         }, settings.SECRET_KEY, algorithm='HS256')
 
         return token.decode('utf-8')
+
+
+class CustomUser(models.Model):
+
+    class Gender(models.TextChoices):
+        MALE = 'male', 'male'
+        FEMALE = 'female', 'female'
+
+    fullname = models.CharField(
+        max_length=250, verbose_name='ФИО', unique=True
+    )
+    born_date = models.DateField(
+        null=True, blank=True, verbose_name='Дата рождения'
+    )
+    country = models.CharField(
+        max_length=150, null=True, verbose_name="Страна"
+    )
+    email = models.EmailField(
+        verbose_name='Email', unique=True, blank=True
+    )
+    city = models.CharField(
+        max_length=150, verbose_name="Город"
+    )
+    gender = models.CharField(
+        max_length=32, verbose_name='пол', choices=Gender.choices, default=Gender.MALE
+    )
+    is_active = models.BooleanField(
+        default=False, verbose_name='Активный'
+    )
+    avatar = models.ImageField(verbose_name='Аватар')
+    activation_code = models.CharField(
+        max_length=25, blank=True, verbose_name='Код для активации'
+    )
+    objects = CustomManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self) -> str:
+        return f"{self.email} -> {self.id}"
+
+    def create_activation_code(self):
+        code = get_random_string(
+            length=10,
+            allowed_chars='1234567890#$%!?_'
+        )
+        self.activation_code = code
+        self.save(update_fields=['activation_code'])

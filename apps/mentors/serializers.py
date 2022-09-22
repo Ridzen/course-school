@@ -1,6 +1,9 @@
 from django.contrib.auth import authenticate
+from django.core.mail import send_mail
 from rest_framework import serializers
-from .models import Teacher
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+
+from .models import Teacher, CustomUser
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -66,3 +69,92 @@ class LoginSerializer(serializers.Serializer):
             'token': user.token,
         }
 
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, email):
+        if not CustomUser.objects.filter(email=email).exists():
+            raise serializers.ValidationError('Пользователь не найден!')
+
+        return email
+
+    def send_verification_email(self):
+        email = self.validated_data.get('email')
+        user = CustomUser.objects.get(email=email)
+        user.create_activation_code()
+        send_mail(
+            'Забыли пароль',
+            f'Ваш код для изменения пароля - {user.activation_code}',
+            'admin@gmail.com',
+            [user.email]
+        )
+
+
+class ForgotPassCompleteSerializer(serializers.Serializer):
+    code = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(min_length=4, required=True)
+    password_confirmation = serializers.CharField(min_length=4, required=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password1 = attrs.get('password')
+        password2 = attrs.get('password_confirmation')
+        code = attrs.get('code')
+        if not CustomUser.objects.filter(email=email, activation_code=code).exists():
+            raise serializers.ValidationError("Invalid confirmation code or email!")
+        if password1 != password2:
+            raise serializers.ValidationError("Passwords didn't match!")
+        return attrs
+
+    def set_new_password(self):
+        email = self.validated_data.get('email')
+        password = self.validated_data.get('password')
+        user = CustomUser.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('avatar', 'full_name', 'born_date', 'country', 'email', 'city',
+                  'gender',)
+
+
+class TeacherSerializer(serializers.Serializer):
+    class Meta:
+        model = Teacher
+        fields = ('username', 'phone_number', 'email', 'subject')
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    model = CustomUser
+
+    """
+    Serializer for password change endpoint.
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
+class TokenObtainSerializer(TokenObtainPairSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['user_id'] = self.user.id
+        return data
+
+
+class TokenRefreshSerializer(TokenRefreshSerializer):
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['user_id'] = self.user.id
+        return data
+
+
+class RegisterCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('')
