@@ -70,6 +70,7 @@ class ActivationView(APIView):
         return Response(msg_[-1], 200)
 
 
+    
 class TeacherViewset(viewsets.ReadOnlyModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer

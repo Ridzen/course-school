@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'apps.mentors',
     'apps.course',
     'apps.request',
+    'apps.payments',
 ]
 
 AUTH_USER_MODEL = 'mentors.Teacher'
