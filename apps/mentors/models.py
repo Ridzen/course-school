@@ -13,6 +13,10 @@ from apps.mentors.manager import CustomManager
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    class Gender(models.TextChoices):
+        MALE = 'male', 'male'
+        FEMALE = 'female', 'female'
+
     username = models.CharField(
         verbose_name='Полное имя', max_length=255, help_text='Akbar Maloer', db_index=True, unique=True,
     )
@@ -24,16 +28,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=True,
         blank=False
     )
-    subject = models.CharField(
-        verbose_name='Имя урока', max_length=25, help_text='Python'
-    )
     created_at = models.DateField(
         verbose_name="Дата создания", auto_now_add=True
     )
-
-    is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=True)
+    fullname = models.CharField(
+            max_length=250, verbose_name='ФИО', unique=True, null=True
+    )
+    born_date = models.DateField(
+        null=True, blank=True, verbose_name='Дата рождения'
+    )
+    country = models.CharField(
+        max_length=150, null=True, verbose_name="Страна"
+    )
+    city = models.CharField(
+        max_length=150, verbose_name="Город", null=True, blank=True
+    )
+    gender = models.CharField(
+            max_length=32, verbose_name='пол', choices=Gender.choices, default=Gender.MALE
+    )
+    avatar = models.ImageField(verbose_name='Аватар', null=True, blank=True)
 
     objects = CustomManager()
 
@@ -89,10 +102,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 # class CustomUser(models.Model):
 #
-#     class Gender(models.TextChoices):
-#         MALE = 'male', 'male'
-#         FEMALE = 'female', 'female'
-#
+    # class Gender(models.TextChoices):
+    #     MALE = 'male', 'male'
+    #     FEMALE = 'female', 'female'
+
 #     fullname = models.CharField(
 #         max_length=250, verbose_name='ФИО', unique=True
 #     )

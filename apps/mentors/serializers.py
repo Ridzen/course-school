@@ -119,14 +119,14 @@ class ForgotPassCompleteSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('avatar', 'full_name', 'born_date', 'country', 'email', 'city',
+        fields = ('avatar', 'fullname', 'born_date', 'country', 'email', 'city',
                   'gender',)
 
 
 class StudentSerializer(serializers.Serializer):
     class Meta:
         model = CustomUser
-        fields = ('username', 'phone_number', 'email', 'subject')
+        fields = ('username', 'phone_number', 'email')
 
 
 class ChangePasswordSerializer(serializers.Serializer):

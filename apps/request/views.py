@@ -15,9 +15,9 @@ from apps.request.serializers import QuestionnaireSerializer
 
 class QuestionnaireAPIView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['name', 'surname']
+    # filterset_fields = ['name', 'surname']
     serializer_class = QuestionnaireSerializer
-    search_fields = ['surname']
+    # search_fields = ['surname']
     ordering_fields = ['created_at']
     queryset = Questionnaire.objects.all()
 
