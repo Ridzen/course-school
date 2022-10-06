@@ -4,7 +4,7 @@ from django.conf import settings
 
 from rest_framework import authentication, exceptions
 
-from apps.mentors.models import Teacher
+from apps.mentors.models import CustomUser
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
@@ -40,8 +40,8 @@ class JWTAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         try:
-            user = Teacher.objects.get(pk=payload['id'])
-        except Teacher.DoesNotExist:
+            user = CustomUser.objects.get(pk=payload['id'])
+        except CustomUser.DoesNotExist:
             msg = 'No user matching this token was found.'
             raise exceptions.AuthenticationFailed(msg)
 

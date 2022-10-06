@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'apps.payments',
 ]
 
-AUTH_USER_MODEL = 'mentors.Teacher'
+AUTH_USER_MODEL = 'mentors.CustomUser'
 
 
 MIDDLEWARE = [
@@ -204,3 +204,9 @@ CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.j
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Paybox
+PAY_SECRET_KEY = 'akEVO9a8iqoxXkzk'
+MERCHANT_ID = '542306'
+BASE_URL = "https://api.paybox.money/"
+CALLBACK_BASE_URL = 'https://course-shopkg.herokuapp.com'

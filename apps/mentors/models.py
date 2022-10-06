@@ -9,10 +9,10 @@ from datetime import timedelta
 from django.utils.crypto import get_random_string
 
 
-from apps.mentors.manager import TeacherManager, CustomManager
+from apps.mentors.manager import CustomManager
 
 
-class Teacher(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(
         verbose_name='Полное имя', max_length=255, help_text='Akbar Maloer', db_index=True, unique=True,
     )
@@ -35,7 +35,7 @@ class Teacher(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
 
-    objects = TeacherManager()
+    objects = CustomManager()
 
     def __str__(self) -> str:
         return f'Teacher: {self.username}'
@@ -87,49 +87,49 @@ class Teacher(AbstractBaseUser, PermissionsMixin):
         return token.decode('utf-8')
 
 
-class CustomUser(models.Model):
-
-    class Gender(models.TextChoices):
-        MALE = 'male', 'male'
-        FEMALE = 'female', 'female'
-
-    fullname = models.CharField(
-        max_length=250, verbose_name='ФИО', unique=True
-    )
-    born_date = models.DateField(
-        null=True, blank=True, verbose_name='Дата рождения'
-    )
-    country = models.CharField(
-        max_length=150, null=True, verbose_name="Страна"
-    )
-    email = models.EmailField(
-        verbose_name='Email', unique=True, blank=True
-    )
-    city = models.CharField(
-        max_length=150, verbose_name="Город"
-    )
-    gender = models.CharField(
-        max_length=32, verbose_name='пол', choices=Gender.choices, default=Gender.MALE
-    )
-    is_active = models.BooleanField(
-        default=False, verbose_name='Активный'
-    )
-    avatar = models.ImageField(verbose_name='Аватар')
-    activation_code = models.CharField(
-        max_length=25, blank=True, verbose_name='Код для активации'
-    )
-    objects = CustomManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
-
-    def __str__(self) -> str:
-        return f"{self.email} -> {self.id}"
-
-    def create_activation_code(self):
-        code = get_random_string(
-            length=10,
-            allowed_chars='1234567890#$%!?_'
-        )
-        self.activation_code = code
-        self.save(update_fields=['activation_code'])
+# class CustomUser(models.Model):
+#
+#     class Gender(models.TextChoices):
+#         MALE = 'male', 'male'
+#         FEMALE = 'female', 'female'
+#
+#     fullname = models.CharField(
+#         max_length=250, verbose_name='ФИО', unique=True
+#     )
+#     born_date = models.DateField(
+#         null=True, blank=True, verbose_name='Дата рождения'
+#     )
+#     country = models.CharField(
+#         max_length=150, null=True, verbose_name="Страна"
+#     )
+#     email = models.EmailField(
+#         verbose_name='Email', unique=True, blank=True
+#     )
+#     city = models.CharField(
+#         max_length=150, verbose_name="Город"
+#     )
+#     gender = models.CharField(
+#         max_length=32, verbose_name='пол', choices=Gender.choices, default=Gender.MALE
+#     )
+#     is_active = models.BooleanField(
+#         default=False, verbose_name='Активный'
+#     )
+#     avatar = models.ImageField(verbose_name='Аватар')
+#     activation_code = models.CharField(
+#         max_length=25, blank=True, verbose_name='Код для активации'
+#     )
+#     objects = CustomManager()
+#
+#     USERNAME_FIELD = 'email'
+#     REQUIRED_FIELDS = []
+#
+#     def __str__(self) -> str:
+#         return f"{self.email} -> {self.id}"
+#
+#     def create_activation_code(self):
+#         code = get_random_string(
+#             length=10,
+#             allowed_chars='1234567890#$%!?_'
+#         )
+#         self.activation_code = code
+#         self.save(update_fields=['activation_code'])

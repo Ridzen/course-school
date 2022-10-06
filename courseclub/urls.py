@@ -33,7 +33,8 @@ urlpatterns = [
     path('api/v1/masterclass', include('apps.masterclass.urls')),
     path('api/v1/mentors', include('apps.mentors.urls')),
     path('api/v1/course', include('apps.course.urls')),
-    path('api/v1/questionnaire', include('apps.request.urls'))
+    path('api/v1/questionnaire', include('apps.request.urls')),
+    path('api/v1/payments', include('apps.payments.urls'))
 ]
 
 urlpatterns += doc_urls

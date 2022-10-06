@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
-from .models import Teacher, CustomUser
+from .models import CustomUser
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -20,11 +20,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
     token = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
-        model = Teacher
+        model = CustomUser
         fields = ('email', 'username', 'password', 'token',)
 
     def create(self, validated_data):
-        return Teacher.objects.create_user(**validated_data)
+        return CustomUser.objects.create_user(**validated_data)
 
 
 class LoginSerializer(serializers.Serializer):
@@ -115,6 +115,7 @@ class ForgotPassCompleteSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -122,9 +123,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
                   'gender',)
 
 
-class TeacherSerializer(serializers.Serializer):
+class StudentSerializer(serializers.Serializer):
     class Meta:
-        model = Teacher
+        model = CustomUser
         fields = ('username', 'phone_number', 'email', 'subject')
 
 
@@ -157,4 +158,4 @@ class TokenRefreshSerializer(TokenRefreshSerializer):
 class RegisterCourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('')
+        fields = ('__all__')

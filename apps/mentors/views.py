@@ -1,10 +1,11 @@
 from rest_framework import status, viewsets, generics
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Teacher, CustomUser
-from .serializers import LoginSerializer, TeacherSerializer, RegistrationSerializer
+from .models import CustomUser
+from .serializers import LoginSerializer, RegistrationSerializer, StudentSerializer, UserProfileSerializer
+from apps.payments.serializers import RegisterRequestSerializer
 
 
 class RegistrationAPIView(APIView):
@@ -69,9 +70,27 @@ class ActivationView(APIView):
         user.save()
         return Response(msg_[-1], 200)
 
-
     
-class TeacherViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = Teacher.objects.all()
-    serializer_class = TeacherSerializer
+class StudentsViewset(viewsets.ReadOnlyModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = StudentSerializer
+
+
+class RegisterCourseView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = RegisterRequestSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        payment_data = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({'register-request-data': serializer.data, 'payment-data': payment_data}, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class UserProfileUpdateView(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = CustomUser.objects.all()
+    serializer_class = UserProfileSerializer
+    lookup_field = 'pk'
 
