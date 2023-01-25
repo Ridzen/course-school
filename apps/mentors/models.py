@@ -47,6 +47,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             max_length=32, verbose_name='пол', choices=Gender.choices, default=Gender.MALE
     )
     avatar = models.ImageField(verbose_name='Аватар', null=True, blank=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     objects = CustomManager()
 
